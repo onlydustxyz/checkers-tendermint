@@ -87,3 +87,18 @@ func (app *Application) Query(reqQuery types.RequestQuery) (resQuery types.Respo
 	}
 	return
 }
+
+func (app *Application) InitChain(req types.RequestInitChain) types.ResponseInitChain {
+	game, err := checkers.Parse(string(req.AppStateBytes))
+	if err != nil {
+		panic(err)
+	}
+	app.state.game = game
+	app.state.height = req.InitialHeight
+	app.state.game.Turn = checkers.BLACK_PLAYER
+
+	return types.ResponseInitChain{
+		AppHash:    req.AppStateBytes,
+		Validators: req.Validators,
+	}
+}
