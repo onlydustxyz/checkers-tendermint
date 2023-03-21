@@ -1,0 +1,7 @@
+
+# Devenv
+.devenv*
+devenv.local.nix
+.direnv
+game
+go.sum
