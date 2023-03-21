@@ -7,12 +7,13 @@ import (
     "github.com/tendermint/tendermint/libs/log"
     tmos "github.com/tendermint/tendermint/libs/os"
     "github.com/tendermint/tendermint/abci/server"
+    yolo "tuto/game/app"
 )
 
 var logger log.Logger
 
 func main() {
-    fmt.Println("Hello, world.")
+    fmt.Println(yolo.Yolo())
     var app = kvstore.NewApplication()
     logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
 
