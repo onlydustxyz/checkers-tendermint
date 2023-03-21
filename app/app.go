@@ -54,6 +54,10 @@ func saveState(state State, db dbm.DB) {
 	}
 }
 
+func readTx(tx []byte) (checkers.Pos, checkers.Pos) {
+	return checkers.Pos{X: int(tx[0]), Y: int(tx[1])}, checkers.Pos{X: int(tx[2]), Y: int(tx[3])}
+}
+
 func NewApplication() *Application {
 	db := dbm.NewMemDB()
 	state := loadState(db)
@@ -101,4 +105,36 @@ func (app *Application) InitChain(req types.RequestInitChain) types.ResponseInit
 		AppHash:    req.AppStateBytes,
 		Validators: req.Validators,
 	}
+}
+
+func (app *Application) CheckTx(req types.RequestCheckTx) types.ResponseCheckTx {
+	start, end := readTx(req.Tx)
+	valid := start.X >= 0 && start.X < 8 && start.Y >= 0 && start.Y < 8 && end.X >= 0 && end.X < 8 && end.Y >= 0 && end.Y < 8
+	if valid {
+		return types.ResponseCheckTx{Code: types.CodeTypeOK}
+	}
+	return types.ResponseCheckTx{Code: 1, Log: "Invalid move"}
+}
+
+func (app *Application) DeliverTx(req types.RequestDeliverTx) types.ResponseDeliverTx {
+	start, end := readTx(req.Tx)
+	captured_checker, err := app.state.game.Move(start, end)
+	if err != nil {
+		return types.ResponseDeliverTx{Code: 1, Log: err.Error()}
+	}
+	var hasCaptured byte
+	if captured_checker != checkers.NO_POS {
+		hasCaptured = 1
+	} else {
+		hasCaptured = 0
+	}
+	events := []types.Event{
+		{
+			Type: "move",
+			Attributes: []types.EventAttribute{
+				{Key: []byte("has-captured"), Value: []byte{hasCaptured}, Index: true},
+			},
+		},
+	}
+	return types.ResponseDeliverTx{Code: types.CodeTypeOK, Events: events, GasUsed: 1}
 }
