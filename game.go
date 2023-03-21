@@ -3,18 +3,17 @@ package main
 import (
     "fmt"
     "os"
-    "github.com/tendermint/tendermint/abci/example/kvstore"
     "github.com/tendermint/tendermint/libs/log"
     tmos "github.com/tendermint/tendermint/libs/os"
     "github.com/tendermint/tendermint/abci/server"
-    yolo "tuto/game/app"
+    checkers "tuto/game/app"
 )
 
 var logger log.Logger
 
 func main() {
-    fmt.Println(yolo.Yolo())
-    var app = kvstore.NewApplication()
+    fmt.Println("Starting the app")
+    var app = checkers.NewApplication()
     logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
 
     // Start the listener
