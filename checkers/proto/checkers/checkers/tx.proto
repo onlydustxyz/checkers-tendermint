@@ -1,0 +1,7 @@
+syntax = "proto3";
+package bernardstanislas.checkers.checkers;
+
+option go_package = "github.com/bernardstanislas/checkers/x/checkers/types";
+
+// Msg defines the Msg service.
+service Msg {}

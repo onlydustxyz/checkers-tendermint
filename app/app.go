@@ -12,6 +12,12 @@ var (
 	stateKey = []byte("stateKey")
 )
 
+type StoredGame struct {
+	Creator string // A stringified address for the creator of the game.
+	Black   string // A stringified address for the player playing blacks.
+	Red     string // A stringified address for the player playing reds.
+}
+
 type Application struct {
 	types.BaseApplication
 
